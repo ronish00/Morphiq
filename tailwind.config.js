@@ -23,12 +23,12 @@ module.exports = {
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
-        purple: {
-          100: "#F4F7FE",
-          200: "#BCB6FF",
-          400: "#868CFF",
-          500: "#7857FF",
-          600: "#4318FF",
+        blue: {
+          100: "#d6e4ff",
+          200: "#b5cdff",
+          400: "#5979ff",
+          500: "#3347ff",
+          600: "#1114ff",
         },
         dark: {
           400: "#7986AC",
