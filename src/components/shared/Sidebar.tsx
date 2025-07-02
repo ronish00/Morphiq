@@ -30,9 +30,7 @@ const Sidebar = () => {
                   <li
                     key={link.route}
                     className={`sidebar-nav_element group ${
-                      isActive
-                        ? "bg-btnGradient text-white"
-                        : "text-gray-700"
+                      isActive ? "bg-btnGradient text-white" : "text-gray-700"
                     }`}
                   >
                     <Link className="sidebar-link" href={link.route}>
@@ -50,7 +48,7 @@ const Sidebar = () => {
               })}
             </ul>
 
-            <ul>
+            <ul className="sidebar-nav_elements" >
               {navLinks.slice(6).map((link) => {
                 const isActive = link.route === pathname;
                 return (
