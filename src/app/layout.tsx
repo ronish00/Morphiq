@@ -21,7 +21,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider appearance={{
+      variables: {colorPrimary: '#53565B'}
+    }}>
     <html lang="en">
       <body
         className={`${IBMPlex.className} antialiased`}

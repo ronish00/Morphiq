@@ -64,6 +64,8 @@ module.exports = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
+        charcoal: '#D3D3D3',
+        teal: '#39cccc',
       },
       fontFamily: {
         IBMPlex: ["var(--font-ibm-plex)"],
