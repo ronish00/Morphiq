@@ -11,12 +11,12 @@ const Sidebar = () => {
   const pathname = usePathname();
   return (
     <aside className="sidebar">
-      <div className="flex size-full flex-col gap-6">
+      <div className="flex size-full flex-col gap-4">
         <Link href={"/"} className="sidebar-logo">
           <Image
-            src={"/assets/images/logo.svg"}
+            src={"/assets/images/morhiq-logo.svg"}
             alt="logo"
-            width={160}
+            width={230}
             height={28}
           />
         </Link>
@@ -30,7 +30,7 @@ const Sidebar = () => {
                   <li
                     key={link.route}
                     className={`sidebar-nav_element group ${
-                      isActive ? "bg-btnGradient text-white" : "text-gray-700"
+                      isActive ? "bg-gradient-to-r from-indigo-600 via-purple-600 to-orange-500 text-white" : "text-gray-700"
                     }`}
                   >
                     <Link className="sidebar-link" href={link.route}>
@@ -80,7 +80,7 @@ const Sidebar = () => {
           </SignedIn>
 
           <SignedOut>
-            <Button asChild className="button bg-btnGradient bg-cover">
+            <Button asChild className="bg-gradient-to-r from-indigo-600 via-purple-600 to-orange-500 text-white px-6 py-3 rounded-full w-full shadow-md hover:shadow-lg transition duration-300 ease-in-out hover:opacity-90" >
               <Link href={"/sign-in"}>Login</Link>
             </Button>
           </SignedOut>

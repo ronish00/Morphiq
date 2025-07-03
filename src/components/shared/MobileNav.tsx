@@ -15,7 +15,7 @@ const MobileNav = () => {
     <header className="header">
       <Link href={"/"} className="flex items-center gap-2 md:py-2">
         <Image
-          src={"/assets/images/logo.svg"}
+          src={"/assets/images/morhiq-logo.svg"}
           alt="logo"
           width={160}
           height={28}
@@ -38,7 +38,7 @@ const MobileNav = () => {
             <SheetContent className="p-6 sm:w-64">
               <>
                 <Image
-                  src={"/assets/images/logo.svg"}
+                  src={"/assets/images/morhiq-logo.svg"}
                   alt="logo"
                   width={160}
                   height={28}
@@ -76,7 +76,7 @@ const MobileNav = () => {
         </SignedIn>
 
         <SignedOut>
-          <Button asChild className="button bg-btnGradient bg-cover">
+          <Button asChild className="button bg-purple-Gradient bg-cover">
             <Link href={"/sign-in"}>Login</Link>
           </Button>
         </SignedOut>
