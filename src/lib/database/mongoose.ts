@@ -17,7 +17,7 @@ let cached: MongooseConnection = global.mongoose || {
 };
 
 if (!cached) {
-  cached = (global as any).mongoose = {
+  cached = global.mongoose = {
     conn: null,
     promise: null,
   };
