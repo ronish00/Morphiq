@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Sans } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
 import "./globals.css";
+import {  ClerkProvider} from '@clerk/nextjs'
 
 const IBMPlex = IBM_Plex_Sans({
   subsets: ["latin"],
