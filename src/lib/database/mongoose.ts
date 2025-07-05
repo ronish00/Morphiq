@@ -7,7 +7,15 @@ interface MongooseConnection {
   promise: Promise<Mongoose> | null;
 }
 
-let cached: MongooseConnection = (global as any).mongoose;
+declare global {
+  var mongoose: MongooseConnection | undefined
+}
+
+let cached: MongooseConnection = global.mongoose || {
+  conn: null,
+  promise: null
+};
+
 if (!cached) {
   cached = (global as any).mongoose = {
     conn: null,
