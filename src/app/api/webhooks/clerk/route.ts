@@ -44,6 +44,8 @@ export async function POST(req: NextRequest) {
         });
       }
 
+      console.log("New user created:", evt.data.id);
+
       return NextResponse.json({ message: "OK", user: newUser });
     }
 
