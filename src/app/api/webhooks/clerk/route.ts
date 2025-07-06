@@ -1,4 +1,4 @@
-import { verifyWebhook, VerifyWebhookOptions } from "@clerk/nextjs/webhooks";
+import { verifyWebhook } from "@clerk/nextjs/webhooks";
 import { NextRequest, NextResponse } from "next/server";
 
 import { createUser, deleteUser, updateUser } from "@/lib/actions/user.action";
