@@ -5,6 +5,7 @@ import User from "../database/models/user.model";
 import { connectToDatabase } from "../database/mongoose"
 import { handleError } from "../utils";
 
+//create user
 export async function createUser(user: CreateUserParams){
     try {
         await connectToDatabase();
@@ -16,6 +17,7 @@ export async function createUser(user: CreateUserParams){
     }
 }
 
+//read user
 export async function getUserById(userId: string){
     try {
         await connectToDatabase();
@@ -29,6 +31,7 @@ export async function getUserById(userId: string){
     }
 }
 
+//update user
 export async function updateUser(clerkId: string, user:UpdateUserParams){
     try {
         await connectToDatabase();
@@ -45,6 +48,7 @@ export async function updateUser(clerkId: string, user:UpdateUserParams){
     }
 }
 
+//delete user
 export async function deleteUser(clerkId: string){
     try {
         await connectToDatabase();
