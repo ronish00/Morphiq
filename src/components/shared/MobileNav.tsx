@@ -1,6 +1,6 @@
 "use client";
 
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { navLinks } from "@/constants";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
 import Image from "next/image";
@@ -37,13 +37,14 @@ const MobileNav = () => {
             </SheetTrigger>
             <SheetContent className="p-6 sm:w-64">
               <>
+                <SheetTitle className="sr-only">Navigation Menu</SheetTitle>{" "}
+                {/* hidden from UI but available for screen readers */}
                 <Image
                   src={"/assets/images/logo.svg"}
                   alt="logo"
                   width={160}
                   height={28}
                 />
-
                 <ul className="header-nav_elements">
                   {navLinks.map((link) => {
                     const isActive = link.route === pathname;
