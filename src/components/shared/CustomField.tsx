@@ -6,15 +6,15 @@ import {
   FormLabel,
   FormMessage,
 } from "../ui/form";
-import { Control } from "react-hook-form";
+import { Control, ControllerRenderProps } from "react-hook-form";
 import z from "zod";
 import { formSchema } from "./TransformationForm";
 
 interface CustomFieldProps {
   control: Control<z.infer<typeof formSchema>> | undefined;
-  render: (props: { field: any }) => ReactNode;
+  render: (props: { field: ControllerRenderProps<z.infer<typeof formSchema>, keyof z.infer<typeof formSchema>> }) => ReactNode;
   name: keyof z.infer<typeof formSchema>;
-  formLabel: string;
+  formLabel?: string;
   className: string;
 }
 
