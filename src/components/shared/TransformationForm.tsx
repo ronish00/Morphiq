@@ -8,8 +8,9 @@ import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import {
   aspectRatioOptions,
+  creditFee,
   defaultValues,
-  //transformationTypes,
+  transformationTypes,
 } from "@/constants";
 import CustomField from "./CustomField";
 import {
@@ -35,16 +36,18 @@ const TransformationForm = ({
   action,
   type,
   data = null,
+  userId,
+  creditBalance,
   config = null,
 }: TransformationFormProps) => {
-  //const transformationType = transformationTypes[type];
+  const transformationType = transformationTypes[type];
   const [image, setImage] = useState(data);
   const [newTransformation, setNewTransformation] =
     useState<Transformations | null>(null);
-  const [isSubmitting] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [isTransforming, setIsTransforming] = useState(false);
   const [transformationConfig, setTransformationConfig] = useState(config);
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
   const initialValues =
     data && action === "Update"
@@ -73,27 +76,25 @@ const TransformationForm = ({
   ) => {
     const imageSize = aspectRatioOptions[value as AspectRatioKey];
 
-    setImage((prevState: ImageProps) => ({
+    setImage((prevState: any) => ({
       ...prevState,
       aspectRatio: imageSize.aspectRatio,
       width: imageSize.width,
       height: imageSize.height,
     }));
-
-    onChangeField(value);
   };
 
   const onInputChangeHandler = (
     fieldName: string,
     value: string,
-    type: TransformationTypeKey,
+    type: string,
     onchangeField: (value: string) => void
   ) => {
     debounce(() => {
-      setNewTransformation((prevState: Transformations | null) => ({
+      setNewTransformation((prevState: any) => ({
         ...prevState,
         [type]: {
-          ...((prevState?.[type] as object) ?? {}),
+          ...prevState?.[type],
           [fieldName === "prompt" ? "prompt" : "to"]: value,
         },
       }));

@@ -1,17 +1,13 @@
 import { toast } from "sonner";
-import {
-  CldImage,
-  CldUploadWidget,
-  CloudinaryUploadWidgetResults,
-} from "next-cloudinary";
+import { CldImage, CldUploadWidget } from "next-cloudinary";
 import Image from "next/image";
 import { dataUrl, getImageSize } from "@/lib/utils";
 import { PlaceholderValue } from "next/dist/shared/lib/get-img-props";
 
 interface MediaUploaderProps {
   onValueChange: (value: string) => void;
-  setImage: React.Dispatch<React.SetStateAction<ImageProps>>;
-  image: ImageProps;
+  setImage: React.Dispatch<any>;
+  image: any;
   publicId: string;
   type: string;
 }
@@ -23,33 +19,23 @@ const MediaUploader = ({
   publicId,
   type,
 }: MediaUploaderProps) => {
-  const onUploadSuccessHandler = (result: CloudinaryUploadWidgetResults) => {
-    if (!result.info || typeof result.info !== "object") return;
-
-    const { public_id, width, height, secure_url } = result.info as {
-      public_id: string;
-      width: number;
-      height: number;
-      secure_url: string;
-    };
-
-    setImage((prevState: ImageProps) => ({
+  const onUploadSuccessHandler = (result: any) => {
+    setImage((prevState: any) => ({
       ...prevState,
-      publicId: public_id,
-      width,
-      height,
-      secureUrl: secure_url,
+      publicId: result?.info?.public_id,
+      width: result?.info?.width,
+      height: result?.info?.height,
+      secureUrl: result?.info?.secure_url,
     }));
 
-    onValueChange(public_id);
+    onValueChange(result?.info?.public_id);
 
     toast.success("Image uploaded successfully", {
       className: "success-toast",
       description: "1 credit was deducted from your account",
     });
   };
-
-  const onUploadErrorHandler = () => {
+  const onUploadErrorHandler = (result: any) => {
     toast.error("Something went wrong while uploading", {
       className: "error-toast",
       description: "Please ty again",
