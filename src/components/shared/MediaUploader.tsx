@@ -50,7 +50,7 @@ const MediaUploader = ({
     });
   };
 
-  const onUploadErrorHandler = (result: CloudinaryUploadWidgetError) => {
+  const onUploadErrorHandler = () => {
     toast.error("Something went wrong while uploading", {
       className: "error-toast",
       description: "Please ty again",
