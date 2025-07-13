@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import {
   aspectRatioOptions,
   defaultValues,
-  transformationTypes,
+  //transformationTypes,
 } from "@/constants";
 import CustomField from "./CustomField";
 import {
@@ -79,6 +79,8 @@ const TransformationForm = ({
       width: imageSize.width,
       height: imageSize.height,
     }));
+
+    onChangeField(value);
   };
 
   const onInputChangeHandler = (

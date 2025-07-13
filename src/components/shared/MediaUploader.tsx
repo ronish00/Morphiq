@@ -2,7 +2,6 @@ import { toast } from "sonner";
 import {
   CldImage,
   CldUploadWidget,
-  CloudinaryUploadWidgetError,
   CloudinaryUploadWidgetResults,
 } from "next-cloudinary";
 import Image from "next/image";
