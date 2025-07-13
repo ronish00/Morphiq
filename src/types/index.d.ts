@@ -18,46 +18,35 @@ declare type UpdateUserParams = {
 };
 
 // ====== IMAGE PARAMS
+declare type ImageProps = {
+  title: string;
+  publicId: string;
+  transformationType: string;
+  width: number;
+  height: number;
+  config: object;
+  secureURL: string;
+  transformationURL: string;
+  aspectRatio: string | undefined;
+  prompt: string | undefined;
+  color: string | undefined;
+};
+
 declare type AddImageParams = {
-  image: {
-    title: string;
-    publicId: string;
-    transformationType: string;
-    width: number;
-    height: number;
-    config: object;
-    secureURL: string;
-    transformationURL: string;
-    aspectRatio: string | undefined;
-    prompt: string | undefined;
-    color: string | undefined;
-  };
+  image: ImageProps;
   userId: string;
   path: string;
 };
 
 declare type UpdateImageParams = {
-  image: {
-    _id: string;
-    title: string;
-    publicId: string;
-    transformationType: string;
-    width: number;
-    height: number;
-    config: object;
-    secureURL: string;
-    transformationURL: string;
-    aspectRatio: string | undefined;
-    prompt: string | undefined;
-    color: string | undefined;
-  };
+  image: ImageProps;
   userId: string;
   path: string;
 };
 
 declare type Transformations = {
   restore?: boolean;
-  fillBackground?: boolean;
+  fill?: boolean;
   remove?: {
     prompt: string;
     removeShadow?: boolean;
@@ -128,7 +117,7 @@ declare type TransformationFormProps = {
 };
 
 declare type TransformedImageProps = {
-  image: URL;
+  image: ImageProps;
   type: string;
   title: string;
   transformationConfig: Transformations | null;
