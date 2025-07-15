@@ -20,7 +20,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { AspectRatioKey, debounce, deepMergeObjects } from "@/lib/utils";
 import MediaUploader from "./MediaUploader";
 import TransformedImage from "./TransformedImage";
@@ -75,14 +75,13 @@ const TransformationForm = ({
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
 
-    if(data || image) {
+    if (data || image) {
       const transformationUrl = getCldImageUrl({
         width: image?.width,
         height: image?.height,
         src: image?.publicId,
-        ...transformationConfig
-      })
-
+        ...transformationConfig,
+      });
 
       const imageData = {
         title: values.title,
@@ -98,32 +97,30 @@ const TransformationForm = ({
         color: values.color,
       };
 
-      if(action === 'Add') {
+      if (action === "Add") {
         try {
           const newImage = await addImage({
             image: imageData,
             userId,
-            path: '/'
-          })
+            path: "/",
+          });
 
-          if(newImage) {
+          if (newImage) {
             form.reset();
             setImage(data);
-            router.push(`/transformations/${newImage._id}`)
+            router.push(`/transformations/${newImage._id}`);
           }
-
         } catch (error) {
           console.log(error);
-          
         }
       }
 
-      if(action === 'Update') {
+      if (action === "Update") {
         try {
           const updatedImage = await updateImage({
             image: {
               ...imageData,
-              _id: data._id
+              _id: data._id,
             },
             userId,
             path: `/transformations/${data._id}`,
@@ -139,8 +136,6 @@ const TransformationForm = ({
 
       setIsSubmitting(false);
     }
-
-
   }
 
   const onSelectFieldHandler = (
@@ -155,8 +150,8 @@ const TransformationForm = ({
       width: imageSize.width,
       height: imageSize.height,
     }));
-    
-    setNewTransformation(transformationType.config)
+
+    setNewTransformation(transformationType.config);
 
     return onChangeField(value);
   };
@@ -175,7 +170,7 @@ const TransformationForm = ({
           [fieldName === "prompt" ? "prompt" : "to"]: value,
         },
       }));
-    }, 1000);
+    }, 1000)();
     return onchangeField(value);
   };
 
@@ -190,9 +185,15 @@ const TransformationForm = ({
     setNewTransformation(null);
 
     startTransition(async () => {
-      await updateCredits(userId, -1)
+      await updateCredits(userId, -1);
     });
   };
+
+  useEffect(() => {
+    if (image && (type === "restore" || type === "removeBackground")) {
+      setNewTransformation(transformationType.config);
+    }
+  }, [image, transformationType.config, type]);
 
   return (
     <Form {...form}>
