@@ -26,7 +26,11 @@ import MediaUploader from "./MediaUploader";
 import TransformedImage from "./TransformedImage";
 import { updateCredits } from "@/lib/actions/user.action";
 import { getCldImageUrl } from "next-cloudinary";
-import { addImage, updateImage } from "@/lib/actions/image.action";
+import {
+  addImage,
+  updateImage,
+  uploadImageToCloudinary,
+} from "@/lib/actions/image.action";
 import { useRouter } from "next/navigation";
 
 export const formSchema = z.object({
@@ -71,26 +75,84 @@ const TransformationForm = ({
     defaultValues: initialValues,
   });
 
+  //grayscale
+  const applyCanvasGrayscale = (
+    imgUrl: string,
+    callback: (dataUrl: string) => void
+  ) => {
+    const img = new Image();
+    img.crossOrigin = "anonymous"; // Needed if from a different origin
+    img.src = imgUrl;
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) return;
+
+      canvas.width = img.width;
+      canvas.height = img.height;
+      ctx.drawImage(img, 0, 0);
+
+      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+      const data = imageData.data;
+
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i],
+          g = data[i + 1],
+          b = data[i + 2];
+        const gray = 0.299 * r + 0.587 * g + 0.114 * b;
+        data[i] = data[i + 1] = data[i + 2] = gray;
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+      const transformedUrl = canvas.toDataURL("image/png");
+      callback(transformedUrl);
+    };
+  };
+
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
 
     if (data || image) {
-      const transformationUrl = getCldImageUrl({
-        width: image?.width,
-        height: image?.height,
-        src: image?.publicId,
-        ...transformationConfig,
-      });
+      let uploadedTransformedData = null;
+
+      if (type === "grayscale" && image?.transformedURL) {
+        try {
+          // Upload the transformed image (dataURL) to Cloudinary
+          uploadedTransformedData = await uploadImageToCloudinary(
+            image.transformedURL,
+            "morphiq"
+          );
+        } catch (error) {
+          console.error("Error uploading grayscale image:", error);
+        }
+      }
+
+      const transformationUrl =
+        type === "grayscale" && uploadedTransformedData
+          ? uploadedTransformedData.secure_url
+          : getCldImageUrl({
+              width: image?.width,
+              height: image?.height,
+              src: image?.publicId,
+              ...transformationConfig,
+            });
 
       const imageData = {
         title: values.title,
-        publicId: image?.publicId,
+        publicId:
+          type === "grayscale" && uploadedTransformedData
+            ? uploadedTransformedData.public_id
+            : image?.publicId,
         transformationType: type,
         width: image?.width,
         height: image?.height,
         config: transformationConfig,
-        secureURL: image?.secureURL,
+        secureURL:
+          type === "grayscale" && uploadedTransformedData
+            ? uploadedTransformedData.secure_url
+            : image?.secureURL,
         transformationURL: transformationUrl,
         aspectRatio: values.aspectRatio,
         prompt: values.prompt,
@@ -138,6 +200,7 @@ const TransformationForm = ({
     }
   }
 
+  //select handler
   const onSelectFieldHandler = (
     value: string,
     onChangeField: (value: string) => void
@@ -156,6 +219,7 @@ const TransformationForm = ({
     return onChangeField(value);
   };
 
+  //input handler
   const onInputChangeHandler = (
     fieldName: string,
     value: string,
@@ -178,6 +242,18 @@ const TransformationForm = ({
   const onTransformHandler = async () => {
     setIsTransforming(true);
 
+    if (type === "grayscale" && image?.secureURL) {
+      applyCanvasGrayscale(image.secureURL, (transformedUrl) => {
+        setImage((prevState: any) => ({
+          ...prevState,
+          transformedURL: transformedUrl,
+        }));
+        setIsTransforming(false);
+        setNewTransformation(null);
+      });
+      return;
+    }
+
     setTransformationConfig(
       deepMergeObjects(newTransformation, transformationConfig)
     );
@@ -190,7 +266,12 @@ const TransformationForm = ({
   };
 
   useEffect(() => {
-    if (image && (type === "restore" || type === "removeBackground")) {
+    if (
+      image &&
+      (type === "restore" ||
+        type === "removeBackground" ||
+        type === "grayscale")
+    ) {
       setNewTransformation(transformationType.config);
     }
   }, [image, transformationType.config, type]);
@@ -312,7 +393,9 @@ const TransformationForm = ({
           <Button
             type="button"
             className="submit-button capitalize"
-            disabled={isTransforming || newTransformation === null}
+            disabled={
+              isTransforming || (!newTransformation && type !== "grayscale")
+            }
             onClick={onTransformHandler}
           >
             {isTransforming ? "Transforming..." : "Apply transformation"}

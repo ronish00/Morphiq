@@ -5,6 +5,11 @@ export const navLinks = [
     icon: "/assets/icons/home.svg",
   },
   {
+    label: "Grayscale",
+    route: "/transformations/add/grayscale",
+    icon: "/assets/icons/grayscale.svg",
+  },
+  {
     label: "Image Restore",
     route: "/transformations/add/restore",
     icon: "/assets/icons/image.svg",
@@ -125,6 +130,13 @@ export const transformationTypes = {
     title: "Restore Image",
     subTitle: "Refine images by removing noise and imperfections",
     config: { restore: true },
+    icon: "image.svg",
+  },
+  grayscale: {
+    type: "grayscale",
+    title: "Grayscale Image",
+    subTitle: "Convert colorful image to grayscale",
+    config: {},
     icon: "image.svg",
   },
   removeBackground: {

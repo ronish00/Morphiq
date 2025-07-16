@@ -87,3 +87,28 @@ export async function getImageById(imageId: string) {
         handleError(error);
     }
 }
+
+//save image in cloudinary
+export async function uploadImageToCloudinary(
+  dataUrl: string,
+  folder = "morphiq"
+) {
+  const formData = new FormData();
+  formData.append("file", dataUrl);
+  formData.append("upload_preset", "morphiq");
+  formData.append("folder", folder);
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME}/image/upload`,
+    {
+      method: "POST",
+      body: formData,
+    }
+  );
+
+  const responseBody = await res.text();
+
+  if (!res.ok) throw new Error(`Failed to upload image: ${responseBody}`);
+
+  return JSON.parse(responseBody);
+}

@@ -29,7 +29,19 @@ const TransformedImage = ({
           </button>
         )}
       </div>
-      {image?.publicId && transformationConfig ? (
+
+      {image?.transformedURL ? (
+        <div className="relative">
+          <img
+            src={image.transformedURL}
+            alt={title}
+            width={getImageSize(type, image, "width")}
+            height={getImageSize(type, image, "height")}
+            className="transformed-image"
+            onLoad={() => setIsTransforming && setIsTransforming(false)}
+          />
+        </div>
+      ) : image?.publicId && transformationConfig ? (
         <div className="relative">
           <CldImage
             width={getImageSize(type, image, "width")}
@@ -51,7 +63,12 @@ const TransformedImage = ({
           />
           {isTransforming && (
             <div className="transforming-loader">
-                <Image src={"/assets/icons/spinner.svg"} width={50} height={50} alt="Transforming" />
+              <Image
+                src={"/assets/icons/spinner.svg"}
+                width={50}
+                height={50}
+                alt="Transforming"
+              />
             </div>
           )}
         </div>
