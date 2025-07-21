@@ -32,6 +32,8 @@ import {
   uploadImageToCloudinary,
 } from "@/lib/actions/image.action";
 import { useRouter } from "next/navigation";
+import { applySketchFilter } from "./transformations/Sketch";
+import { applyCanvasGrayscale } from "./transformations/Grayscale";
 
 export const formSchema = z.object({
   title: z.string(),
@@ -75,41 +77,6 @@ const TransformationForm = ({
     defaultValues: initialValues,
   });
 
-  //grayscale
-  const applyCanvasGrayscale = (
-    imgUrl: string,
-    callback: (dataUrl: string) => void
-  ) => {
-    const img = new Image();
-    img.crossOrigin = "anonymous"; // Needed if from a different origin
-    img.src = imgUrl;
-
-    img.onload = () => {
-      const canvas = document.createElement("canvas");
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
-
-      canvas.width = img.width;
-      canvas.height = img.height;
-      ctx.drawImage(img, 0, 0);
-
-      const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-      const data = imageData.data;
-
-      for (let i = 0; i < data.length; i += 4) {
-        const r = data[i],
-          g = data[i + 1],
-          b = data[i + 2];
-        const gray = 0.299 * r + 0.587 * g + 0.114 * b;
-        data[i] = data[i + 1] = data[i + 2] = gray;
-      }
-
-      ctx.putImageData(imageData, 0, 0);
-      const transformedUrl = canvas.toDataURL("image/png");
-      callback(transformedUrl);
-    };
-  };
-
   // 2. Define a submit handler.
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsSubmitting(true);
@@ -117,7 +84,10 @@ const TransformationForm = ({
     if (data || image) {
       let uploadedTransformedData = null;
 
-      if (type === "grayscale" && image?.transformedURL) {
+      if (
+        type === "grayscale" ||
+        (type === "sketch" && image?.transformedURL)
+      ) {
         try {
           // Upload the transformed image (dataURL) to Cloudinary
           uploadedTransformedData = await uploadImageToCloudinary(
@@ -129,30 +99,25 @@ const TransformationForm = ({
         }
       }
 
-      const transformationUrl =
-        type === "grayscale" && uploadedTransformedData
-          ? uploadedTransformedData.secure_url
-          : getCldImageUrl({
-              width: image?.width,
-              height: image?.height,
-              src: image?.publicId,
-              ...transformationConfig,
-            });
+      const transformationUrl = getCldImageUrl({
+        width: image?.width,
+        height: image?.height,
+        src: image?.publicId,
+        ...transformationConfig,
+      });
 
       const imageData = {
         title: values.title,
-        publicId:
-          type === "grayscale" && uploadedTransformedData
-            ? uploadedTransformedData.public_id
-            : image?.publicId,
+        publicId: uploadedTransformedData
+          ? uploadedTransformedData.public_id
+          : image?.publicId,
         transformationType: type,
         width: image?.width,
         height: image?.height,
         config: transformationConfig,
-        secureURL:
-          type === "grayscale" && uploadedTransformedData
-            ? uploadedTransformedData.secure_url
-            : image?.secureURL,
+        secureURL: uploadedTransformedData
+          ? uploadedTransformedData.secure_url
+          : image?.secureURL,
         transformationURL: transformationUrl,
         aspectRatio: values.aspectRatio,
         prompt: values.prompt,
@@ -242,15 +207,28 @@ const TransformationForm = ({
   const onTransformHandler = async () => {
     setIsTransforming(true);
 
+    //sketch transformation
+    if (type === "sketch" && image?.secureURL) {
+      const canvas = await applySketchFilter(image.secureURL);
+      const transformedUrl = canvas.toDataURL();
+      setImage((prevState: any) => ({
+        ...prevState,
+        transformedURL: transformedUrl,
+      }));
+      setIsTransforming(false);
+      return;
+    }
+
+    //grayscale tranformation
     if (type === "grayscale" && image?.secureURL) {
       applyCanvasGrayscale(image.secureURL, (transformedUrl) => {
         setImage((prevState: any) => ({
           ...prevState,
           transformedURL: transformedUrl,
         }));
-        setIsTransforming(false);
-        setNewTransformation(null);
       });
+      setIsTransforming(false);
+      setNewTransformation(null);
       return;
     }
 
@@ -270,7 +248,8 @@ const TransformationForm = ({
       image &&
       (type === "restore" ||
         type === "removeBackground" ||
-        type === "grayscale")
+        type === "grayscale" ||
+        type === "sketch")
     ) {
       setNewTransformation(transformationType.config);
     }
@@ -393,9 +372,7 @@ const TransformationForm = ({
           <Button
             type="button"
             className="submit-button capitalize"
-            disabled={
-              isTransforming || (!newTransformation && type !== "grayscale")
-            }
+            disabled={isTransforming || !newTransformation}
             onClick={onTransformHandler}
           >
             {isTransforming ? "Transforming..." : "Apply transformation"}

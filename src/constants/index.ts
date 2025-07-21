@@ -10,6 +10,11 @@ export const navLinks = [
     icon: "/assets/icons/grayscale.svg",
   },
   {
+    label: "Sketchify",
+    route: "/transformations/add/sketch",
+    icon: "/assets/icons/sketch.svg",
+  },
+  {
     label: "Image Restore",
     route: "/transformations/add/restore",
     icon: "/assets/icons/image.svg",
@@ -134,8 +139,15 @@ export const transformationTypes = {
   },
   grayscale: {
     type: "grayscale",
-    title: "Grayscale Image",
-    subTitle: "Convert colorful image to grayscale",
+    title: "Grayscale",
+    subTitle: "Simplify the mood, amplify the depth—go grayscale.",
+    config: {},
+    icon: "image.svg",
+  },
+  sketch: {
+    type: "sketch",
+    title: "Sketchify",
+    subTitle: "Add a bold, artistic sketch effect to your image.",
     config: {},
     icon: "image.svg",
   },
