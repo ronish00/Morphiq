@@ -32,8 +32,8 @@ import {
   uploadImageToCloudinary,
 } from "@/lib/actions/image.action";
 import { useRouter } from "next/navigation";
-import { applySketchFilter } from "./transformations/Sketch";
-import { applyCanvasGrayscale } from "./transformations/Grayscale";
+import { applySketchFilter } from "@/components/transformations/Sketch";
+import { applyCanvasGrayscale } from "@/components/transformations/Grayscale";
 
 export const formSchema = z.object({
   title: z.string(),
