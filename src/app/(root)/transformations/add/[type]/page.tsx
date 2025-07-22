@@ -1,17 +1,19 @@
+"use client";
+
+import React from "react";
 import Header from "@/components/shared/Header";
 import TransformationForm from "@/components/shared/TransformationForm";
 import { transformationTypes } from "@/constants";
-import { getUserById } from "@/lib/actions/user.action";
-import { auth } from "@clerk/nextjs/server";
+import { useUser } from "@/context/UserContext";
+import { redirect } from "next/navigation";
 
-const AddTransformationTypePage = async ({ params }: SearchParamProps) => {
-  const { type } = await params;
-  const { userId, redirectToSignIn } = await auth();
+const AddTransformationTypePage = ({ params }: SearchParamProps) => {
+  const resolvedParams = React.use(params);
+  const { type } = resolvedParams;
   const { config, icon, title, subTitle } = transformationTypes[type];
+  const user = useUser();
 
-  if (!userId) return redirectToSignIn();
-
-  const user = await getUserById(userId);
+  if (!user) return redirect("/sign-in");
 
   return (
     <>

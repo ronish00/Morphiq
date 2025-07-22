@@ -1,6 +1,21 @@
 /* eslint-disable no-unused-vars */
 
 // ====== USER PARAMS
+declare type User = {
+  _id: string;
+  clerkId: string;
+  email: string;
+  username: string;
+  photo: string;
+  firstName: string;
+  lastName: string;
+  planId: number;
+  creditBalance: number;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+
 declare type CreateUserParams = {
   clerkId: string;
   email: string;
@@ -116,9 +131,10 @@ declare type RemoveUrlQueryParams = {
 };
 
 declare type SearchParamProps = {
-  params: { id: string; type: TransformationTypeKey };
+  params: Promise<{ id: string; type: TransformationTypeKey }>;
   searchParams: { [key: string]: string | string[] | undefined };
 };
+
 
 declare type TransformationFormProps = {
   action: "Add" | "Update";
