@@ -115,10 +115,10 @@ const TransformationForm = ({
         width: image?.width,
         height: image?.height,
         config: transformationConfig,
-        secureURL: uploadedTransformedData
+        secureURL: image?.secureURL,
+        transformationUrl: uploadedTransformedData
           ? uploadedTransformedData.secure_url
-          : image?.secureURL,
-        transformationURL: transformationUrl,
+          : transformationUrl,
         aspectRatio: values.aspectRatio,
         prompt: values.prompt,
         color: values.color,

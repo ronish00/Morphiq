@@ -1,3 +1,4 @@
+"use client";
 import { dataUrl, debounce, getImageSize } from "@/lib/utils";
 import { CldImage } from "next-cloudinary";
 import { PlaceholderValue } from "next/dist/shared/lib/get-img-props";
@@ -13,6 +14,7 @@ const TransformedImage = ({
   hasDownload = false,
 }: TransformedImageProps) => {
   const downloadHandler = () => {};
+  console.log(image)
   return (
     <div className="flex flex-col gap-5">
       <div className="flex-between">
@@ -46,14 +48,12 @@ const TransformedImage = ({
           <CldImage
             width={getImageSize(type, image, "width")}
             height={getImageSize(type, image, "height")}
-            src={image?.publicId}
+            src={image.publicId}
             alt={title}
             sizes={"(max-width: 768px) 100vw, 50vw"}
             placeholder={dataUrl as PlaceholderValue}
             className="transformed-image"
-            onLoad={() => {
-              setIsTransforming && setIsTransforming(false);
-            }}
+            onLoad={() => setIsTransforming && setIsTransforming(false)}
             onError={() => {
               debounce(() => {
                 setIsTransforming && setIsTransforming(false);
@@ -71,6 +71,17 @@ const TransformedImage = ({
               />
             </div>
           )}
+        </div>
+      ) : image?.transformationUrl ? (
+        <div className="relative">
+          <img
+            src={image.transformationUrl}
+            alt={title}
+            width={getImageSize(type, image, "width")}
+            height={getImageSize(type, image, "height")}
+            className="transformed-image"
+            onLoad={() => setIsTransforming && setIsTransforming(false)}
+          />
         </div>
       ) : (
         <div className="transformed-placeholder">Transformed Image</div>
