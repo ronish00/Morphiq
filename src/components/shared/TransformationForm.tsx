@@ -217,6 +217,11 @@ const TransformationForm = ({
         transformedURL: transformedUrl,
       }));
       setIsTransforming(false);
+
+      startTransition(async () => {
+        await updateCredits(userId, -1);
+      });
+
       return;
     }
 
@@ -230,6 +235,11 @@ const TransformationForm = ({
       });
       setIsTransforming(false);
       setNewTransformation(null);
+
+      startTransition(async () => {
+        await updateCredits(userId, -1);
+      });
+
       return;
     }
 
