@@ -10,7 +10,7 @@ import { getImageSize } from "@/lib/utils";
 import { DeleteConfirmation } from "@/components/shared/DeleteConfirmation";
 import React from "react";
 
-const ImageDetails = async ({ params}: SearchParamProps) => {
+const ImageDetails = async ({ params }: SearchParamProps) => {
     const { id } = await params;
   const { userId } = await auth();
 
