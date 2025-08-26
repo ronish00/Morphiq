@@ -6,11 +6,13 @@ import { getUserById } from "@/lib/actions/user.action";
 import { auth } from "@clerk/nextjs/server";
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
-  const {userId, redirectToSignIn} = await auth();
+  const {userId} = await auth();
     
-    if (!userId) return redirectToSignIn();
+  let user = null;
+  if (userId) {
+    user =  await getUserById(userId);
+  }
     
-    const user = await getUserById(userId);
   return (
     <main className="root">
         <Sidebar />

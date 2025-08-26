@@ -1,3 +1,5 @@
+import { compressTransformedCanvas } from "./ImageCompression";
+
 export const applyCanvasGrayscale = (
   imgUrl: string,
   callback: (dataUrl: string) => void
@@ -6,7 +8,7 @@ export const applyCanvasGrayscale = (
   img.crossOrigin = "anonymous"; // Needed if from a different origin
   img.src = imgUrl;
 
-  img.onload = () => {
+  img.onload = async () => {
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
@@ -27,7 +29,20 @@ export const applyCanvasGrayscale = (
     }
 
     ctx.putImageData(imageData, 0, 0);
-    const transformedUrl = canvas.toDataURL("image/png");
-    callback(transformedUrl);
+
+    try {
+      const compressedBlob = await compressTransformedCanvas(canvas);
+
+      // Convert to Data URL for preview
+      const reader = new FileReader();
+      reader.readAsDataURL(compressedBlob);
+      reader.onloadend = () => {
+        const compressedDataUrl = reader.result as string;
+
+        callback(compressedDataUrl);
+      };
+    } catch (err) {
+      console.error("Compression failed:", err);
+    }
   };
 };

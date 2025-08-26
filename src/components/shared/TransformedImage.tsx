@@ -14,6 +14,7 @@ const TransformedImage = ({
   setIsTransforming,
   hasDownload = false,
 }: TransformedImageProps) => {
+  const format: 'webp' | null = (image?.transformationType === 'sketch' || image?.transformationType === 'grayscale') ? 'webp' : null;
   const downloadHandler = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     e.preventDefault();
 
@@ -22,7 +23,7 @@ const TransformedImage = ({
       height: image?.height,
       src: image?.publicId,
       ...transformationConfig
-    }), title);
+    }), title, format || undefined);
   };
   
   return (
