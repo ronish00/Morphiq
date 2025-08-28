@@ -5,29 +5,14 @@ export const navLinks = [
     icon: "/assets/icons/home.svg",
   },
   {
-    label: "Grayscale",
-    route: "/transformations/add/grayscale",
-    icon: "/assets/icons/grayscale.svg",
-  },
-  {
     label: "Sketchify",
     route: "/transformations/add/sketch",
     icon: "/assets/icons/sketch.svg",
   },
   {
-    label: "Image Restore",
-    route: "/transformations/add/restore",
-    icon: "/assets/icons/image.svg",
-  },
-  {
     label: "Generative Fill",
     route: "/transformations/add/fill",
     icon: "/assets/icons/stars.svg",
-  },
-  {
-    label: "Object Remove",
-    route: "/transformations/add/remove",
-    icon: "/assets/icons/scan.svg",
   },
   {
     label: "Object Recolor",
@@ -38,6 +23,11 @@ export const navLinks = [
     label: "Background Remove",
     route: "/transformations/add/removeBackground",
     icon: "/assets/icons/camera.svg",
+  },
+  {
+    label: "Grayscale",
+    route: "/transformations/add/grayscale",
+    icon: "/assets/icons/grayscale.svg",
   },
   {
     label: "Profile",
@@ -130,25 +120,18 @@ export const plans = [
 ];
 
 export const transformationTypes = {
-  restore: {
-    type: "restore",
-    title: "Restore Image",
-    subTitle: "Refine images by removing noise and imperfections",
-    config: { restore: true },
-    icon: "image.svg",
-  },
   grayscale: {
     type: "grayscale",
     title: "Grayscale",
     subTitle: "Simplify the mood, amplify the depth—go grayscale.",
-    config: {},
+    config: {grayscale: true},
     icon: "image.svg",
   },
   sketch: {
     type: "sketch",
     title: "Sketchify",
     subTitle: "Add a bold, artistic sketch effect to your image.",
-    config: {},
+    config: {sketch: true},
     icon: "image.svg",
   },
   removeBackground: {
@@ -164,15 +147,6 @@ export const transformationTypes = {
     subTitle: "Enhance an image's dimensions using AI outpainting",
     config: { fillBackground: true },
     icon: "stars.svg",
-  },
-  remove: {
-    type: "remove",
-    title: "Object Remove",
-    subTitle: "Identify and eliminate objects from images",
-    config: {
-      remove: { prompt: "", removeShadow: true, multiple: true },
-    },
-    icon: "scan.svg",
   },
   recolor: {
     type: "recolor",

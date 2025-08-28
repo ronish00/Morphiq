@@ -95,11 +95,16 @@ export const Collection = ({
 };
 
 const Card = ({ image }: { image: IImage }) => {
+  const isTransformed =
+    image?.transformationType === "grayscale" ||
+    image?.transformationType === "sketch";
   return (
     <li>
       <Link href={`/transformations/${image._id}`} className="collection-card">
         <CldImage
-          src={image.publicId}
+          src={
+            isTransformed ? image.transformationUrl ?? "" : image.publicId ?? ""
+          }
           alt={image.title}
           width={image.width}
           height={image.height}

@@ -109,9 +109,7 @@ const TransformationForm = ({
 
       const imageData = {
         title: values.title,
-        publicId: uploadedTransformedData
-          ? uploadedTransformedData.public_id
-          : image?.publicId,
+        publicId: image?.publicId,
         transformationType: type,
         width: image?.width,
         height: image?.height,
@@ -208,15 +206,16 @@ const TransformationForm = ({
   const onTransformHandler = async () => {
     setIsTransforming(true);
 
-    //sketch transformation
-    if (type === "sketch" && image?.secureURL) {
-      const canvas = await applySketchFilter(image.secureURL);
-      const transformedUrl = canvas.toDataURL();
-      setImage((prevState: any) => ({
-        ...prevState,
-        transformedURL: transformedUrl,
-      }));
+    //grayscale tranformation
+    if (type === "grayscale" && image?.secureURL) {
+      applyCanvasGrayscale(image.secureURL, (transformedUrl) => {
+        setImage((prevState: any) => ({
+          ...prevState,
+          transformedURL: transformedUrl,
+        }));
+      });
       setIsTransforming(false);
+      setNewTransformation(null);
 
       startTransition(async () => {
         await updateCredits(userId, -1);
@@ -224,10 +223,9 @@ const TransformationForm = ({
 
       return;
     }
-
-    //grayscale tranformation
-    if (type === "grayscale" && image?.secureURL) {
-      applyCanvasGrayscale(image.secureURL, (transformedUrl) => {
+    //sketch tranformation
+    if (type === "sketch" && image?.secureURL) {
+      applySketchFilter(image.secureURL, (transformedUrl) => {
         setImage((prevState: any) => ({
           ...prevState,
           transformedURL: transformedUrl,
@@ -257,10 +255,10 @@ const TransformationForm = ({
   useEffect(() => {
     if (
       image &&
-      (type === "restore" ||
-        type === "removeBackground" ||
+      (type === "removeBackground" ||
         type === "grayscale" ||
-        type === "sketch")
+        type === "sketch"
+      )
     ) {
       setNewTransformation(transformationType.config);
     }
@@ -304,13 +302,13 @@ const TransformationForm = ({
           />
         )}
 
-        {(type === "remove" || type == "recolor") && (
+        {(type == "recolor") && (
           <div className="prompt-field">
             <CustomField
               control={form.control}
               name="prompt"
               formLabel={
-                type === "remove" ? "Object to remove" : "Object to recolor"
+                "Object to recolor"
               }
               className="w-full"
               render={({ field }) => (

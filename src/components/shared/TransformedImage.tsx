@@ -21,7 +21,7 @@ const TransformedImage = ({
     download(getCldImageUrl({
       width: image?.width,
       height: image?.height,
-      src: image?.publicId,
+      src: format ? image?.transformationUrl : image?.publicId,
       ...transformationConfig
     }), title, format || undefined);
   };

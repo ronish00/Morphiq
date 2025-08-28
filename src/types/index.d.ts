@@ -71,19 +71,15 @@ declare type UpdateImageParams = {
 };
 
 declare type Transformations = {
-  restore?: boolean;
   fillBackground?: boolean;
-  remove?: {
-    prompt: string;
-    removeShadow?: boolean;
-    multiple?: boolean;
-  };
   recolor?: {
     prompt?: string;
     to: string;
     multiple?: boolean;
   };
   removeBackground?: boolean;
+  grayscale?: boolean;
+  sketch?: boolean;
 };
 
 // ====== TRANSACTION PARAMS
@@ -104,9 +100,7 @@ declare type CreateTransactionParams = {
 };
 
 declare type TransformationTypeKey =
-  | "restore"
-  | "fill"
-  | "remove"
+    "fill"
   | "recolor"
   | "removeBackground"
   | "grayscale"
