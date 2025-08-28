@@ -46,12 +46,19 @@ const TransformedImage = ({
       {image?.transformedURL ? (
         <div className="relative">
           <img
-            src={image.transformedURL}
+            src={dataUrl} // shimmer placeholder
+            data-src={image.transformedURL} // actual transformed image
             alt={title}
             width={getImageSize(type, image, "width")}
             height={getImageSize(type, image, "height")}
             className="transformed-image"
-            onLoad={() => setIsTransforming && setIsTransforming(false)}
+            style={{ filter: "blur(10px)", transition: "filter 0.3s ease-out" }}
+            onLoad={(e) => {
+              const target = e.currentTarget as HTMLImageElement;
+              target.src = target.dataset.src!; // replace with actual image
+              target.style.filter = "blur(0px)";
+              setIsTransforming && setIsTransforming(false);
+            }}
           />
         </div>
       ) : image?.publicId && transformationConfig ? (
