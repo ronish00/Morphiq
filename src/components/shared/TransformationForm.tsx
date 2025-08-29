@@ -37,11 +37,19 @@ import { applyCanvasGrayscale } from "@/components/transformations/Grayscale";
 import { InsufficientCreditsModal } from "./InsufficientCreditsModal";
 
 export const formSchema = z.object({
-  title: z.string(),
+  title: z
+    .string({ required_error: "Title is required" })
+    .min(1, { message: "Title cannot be empty" }),
+
   aspectRatio: z.string().optional(),
+
   color: z.string().optional(),
+
   prompt: z.string().optional(),
-  publicId: z.string(),
+
+  publicId: z
+    .string({ required_error: "Image is required" })
+    .min(1, { message: "Image cannot be empty" }),
 });
 
 const TransformationForm = ({
@@ -255,10 +263,7 @@ const TransformationForm = ({
   useEffect(() => {
     if (
       image &&
-      (type === "removeBackground" ||
-        type === "grayscale" ||
-        type === "sketch"
-      )
+      (type === "removeBackground" || type === "grayscale" || type === "sketch")
     ) {
       setNewTransformation(transformationType.config);
     }
@@ -302,14 +307,12 @@ const TransformationForm = ({
           />
         )}
 
-        {(type == "recolor") && (
+        {type == "recolor" && (
           <div className="prompt-field">
             <CustomField
               control={form.control}
               name="prompt"
-              formLabel={
-                "Object to recolor"
-              }
+              formLabel={"Object to recolor"}
               className="w-full"
               render={({ field }) => (
                 <Input
