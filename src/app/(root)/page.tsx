@@ -1,15 +1,52 @@
+"use client";
+
 import { Collection } from "@/components/shared/Collection";
 import { navLinks } from "@/constants";
-import { getAllImages } from "@/lib/actions/image.action";
+import { useImages } from "@/context/ImageContext";
+import { useUser } from "@/context/UserContext";
+import { searchUserImages } from "@/lib/actions/image.action";
 import Image from "next/image";
 import Link from "next/link";
+import { redirect, useSearchParams } from "next/navigation";
+import React, { useEffect, useState } from "react";
 
-const Home = async ({ searchParams }: SearchParamProps) => {
-  const params = await searchParams;
-  const page = Number(params?.page) || 1;
-  const searchQuery = (params?.query as string) || "";
+const Home = () => {
+  const searchParams = useSearchParams();
+  const page = searchParams.get("page") ? Number(searchParams.get("page")) : 1;
+  const searchQuery = searchParams.get("query");
+  const user = useUser();
 
-  const images = await getAllImages({ page, searchQuery });
+  const { images: contextImages, totalPages: contextTotalPages } = useImages();
+
+  const [images, setImages] = useState(contextImages || []);
+  const [totalPages, setTotalPages] = useState(contextTotalPages || 1);
+
+  useEffect(() => {
+    if (searchQuery) {
+      if (!user) {
+        redirect("/sign-in");
+      }
+
+      const fetchSearchImages = async () => {
+        try {
+          const result = await searchUserImages({
+            userId: user._id,
+            searchQuery,
+            page,
+          });
+          setImages(result?.data || []);
+          setTotalPages(result?.totalPages || 1);
+        } catch (err) {
+          throw new Error("Failed to fetch images");
+        }
+      };
+
+      fetchSearchImages();
+    } else {
+      setImages(contextImages || []);
+      setTotalPages(contextTotalPages || 1);
+    }
+  }, [searchQuery, user, page, contextImages, contextTotalPages]);
 
   return (
     <>
@@ -36,8 +73,8 @@ const Home = async ({ searchParams }: SearchParamProps) => {
       <section className="sm:mt-12">
         <Collection
           hasSearch={true}
-          images={images?.data}
-          totalPages={images?.totalPage}
+          images={images}
+          totalPages={totalPages}
           page={page}
         />
       </section>

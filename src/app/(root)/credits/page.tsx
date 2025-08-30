@@ -1,20 +1,16 @@
-import { auth } from "@clerk/nextjs/server";
+"use client"
 import Image from "next/image";
 import { redirect } from "next/navigation";
-
 import Header from "@/components/shared/Header";
 import { Button } from "@/components/ui/button";
 import { plans } from "@/constants";
-import { getUserById } from "@/lib/actions/user.action";
 import { SignedIn } from "@clerk/nextjs";
 import Checkout from "@/components/shared/Checkout";
+import { useUser } from "@/context/UserContext";
 
-const Credits = async () => {
-  const { userId } = await auth();
-
-  if (!userId) redirect("/sign-in");
-
-  const user = await getUserById(userId);
+const Credits = () => {
+  const user = useUser();
+  if (!user) redirect("/sign-in");
 
   return (
     <>

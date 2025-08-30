@@ -163,6 +163,45 @@ export async function getUserImages({
   }
 }
 
+//search user images
+export async function searchUserImages({
+  userId,
+  searchQuery = "",
+  limit = 9,
+  page = 1,
+}: {
+  userId: string;
+  searchQuery: string;
+  limit?: number;
+  page: number;
+}) {
+  try {
+    await connectToDatabase();
+
+    const skipAmount = (Number(page) - 1) * limit;
+
+    // Build query: user + search
+    const query: any = { author: userId };
+    if (searchQuery) {
+      query.title = { $regex: searchQuery, $options: "i" }; // case-insensitive
+    }
+
+    const images = await populateUser(
+      Image.find(query).sort({ updatedAt: -1 }).skip(skipAmount).limit(limit)
+    );
+
+    const totalImages = await Image.find(query).countDocuments();
+
+    return {
+      data: JSON.parse(JSON.stringify(images)),
+      totalPages: Math.ceil(totalImages / limit),
+    };
+  } catch (error) {
+    handleError(error);
+  }
+}
+
+
 //save image in cloudinary
 export async function uploadImageToCloudinary(
   dataUrl: string,
