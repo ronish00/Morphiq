@@ -222,7 +222,7 @@ const TransformationForm = ({
           transformedURL: transformedUrl,
         }));
       });
-      setIsTransforming(false);
+
       setNewTransformation(null);
 
       startTransition(async () => {
@@ -239,7 +239,7 @@ const TransformationForm = ({
           transformedURL: transformedUrl,
         }));
       });
-      setIsTransforming(false);
+      
       setNewTransformation(null);
 
       startTransition(async () => {

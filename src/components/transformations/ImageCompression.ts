@@ -7,7 +7,7 @@ export async function compressTransformedCanvas(
 ): Promise<Blob> {
   const desiredMime = `image/${format}`;
 
-  // Helper: check if the canvas can actually produce requested mime (some browsers don't support webp)
+  // check if the canvas can actually produce requested mime (some browsers don't support webp)
   function supportsMime(c: HTMLCanvasElement, mime: string): boolean {
     try {
       const data = c.toDataURL(mime);

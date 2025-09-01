@@ -1,10 +1,10 @@
 import { compressTransformedCanvas } from "./ImageCompression";
 
 type Options = {
-  blurRadius?: number;      // px for blur of inverted image (higher -> stronger pencil lines)
-  sharpenAmount?: number;   // multiplier for sharpening kernel (1 = neutral, >1 = stronger)
-  contrast?: number;        // -100..100 (0 = no change)
-  quality?: number;         // passed to compressTransformedCanvas (if supported)
+  blurRadius?: number;      
+  sharpenAmount?: number;   
+  contrast?: number;        
+  quality?: number;        
 };
 
 export const applySketchFilter = (
@@ -13,9 +13,9 @@ export const applySketchFilter = (
   options: Options = {}
 ) => {
   const {
-    blurRadius = 6,      // sensible default for sketches
-    sharpenAmount = 1.0, // moderate sharpening
-    contrast = 10,       // slight contrast boost
+    blurRadius = 6,    
+    sharpenAmount = 1.0, 
+    contrast = 10,     
     quality = 0.9,
   } = options;
 
@@ -27,7 +27,6 @@ export const applySketchFilter = (
     const width = img.width;
     const height = img.height;
 
-    // --- helper functions ---
     const clamp = (v: number) => (v < 0 ? 0 : v > 255 ? 255 : v | 0);
 
     function adjustContrast(imageData: ImageData, contrastValue: number) {
@@ -84,7 +83,7 @@ export const applySketchFilter = (
     const baseCtx = baseCanvas.getContext("2d")!;
     baseCtx.drawImage(img, 0, 0);
 
-    // 1) convert to grayscale (and keep as base)
+    //convert to grayscale
     const baseImageData = baseCtx.getImageData(0, 0, width, height);
     const base = baseImageData.data;
     for (let i = 0; i < base.length; i += 4) {
@@ -93,7 +92,7 @@ export const applySketchFilter = (
     }
     baseCtx.putImageData(baseImageData, 0, 0);
 
-    // 2) make inverted image from grayscale
+    //make inverted image from grayscale
     const invCanvas = document.createElement("canvas");
     invCanvas.width = width;
     invCanvas.height = height;
@@ -109,7 +108,7 @@ export const applySketchFilter = (
     }
     invCtx.putImageData(invImageData, 0, 0);
 
-    // 3) blur the inverted image using canvas filter (high-quality and fast)
+    //blur the inverted image using canvas filter
     const blurCanvas = document.createElement("canvas");
     blurCanvas.width = width;
     blurCanvas.height = height;
@@ -120,7 +119,6 @@ export const applySketchFilter = (
       blurCtx.drawImage(invCanvas, 0, 0);
       blurCtx.filter = "none";
     } catch (e) {
-      // If browser doesn't support ctx.filter, fallback to drawing the inverted canvas multiple times (less ideal)
       blurCtx.globalAlpha = 0.5;
       for (let y = -2; y <= 2; y++) {
         for (let x = -2; x <= 2; x++) {
@@ -130,7 +128,7 @@ export const applySketchFilter = (
       blurCtx.globalAlpha = 1.0;
     }
 
-    // 4) dodge blend between base grayscale and blurred inverted (division dodge)
+    //dodge blend between base grayscale and blurred inverted (division dodge)
     const blurredData = blurCtx.getImageData(0, 0, width, height).data;
     const baseData = baseCtx.getImageData(0, 0, width, height).data; // grayscale base
     const resultCanvas = document.createElement("canvas");
@@ -151,13 +149,13 @@ export const applySketchFilter = (
     }
     resultCtx.putImageData(outImage, 0, 0);
 
-    // 5) optional contrast boost
+    //optional contrast boost
     let finalImage = resultCtx.getImageData(0, 0, width, height);
     if (contrast !== 0) {
       finalImage = adjustContrast(finalImage, contrast);
     }
 
-    // 6) unsharp mask (sharpen) using a simple kernel scaled by sharpenAmount
+    //unsharp mask (sharpen) using a simple kernel scaled by sharpenAmount
     // Basic sharpen kernel: [[0, -1, 0], [-1, 5, -1], [0, -1, 0]]
     const baseKernel = [0, -1, 0, -1, 5, -1, 0, -1, 0];
     // scale the center value according to sharpenAmount:
@@ -168,7 +166,7 @@ export const applySketchFilter = (
     const sharpenedImage = convolve(finalImage, kernel, 3, 3, divisor);
     resultCtx.putImageData(sharpenedImage, 0, 0);
 
-    // 7) compress and callback (keeps your compressTransformedCanvas usage)
+    //compress and callback (keeps your compressTransformedCanvas usage)
     try {
       const compressedBlob = await compressTransformedCanvas(resultCanvas, quality, "webp");
       const reader = new FileReader();
